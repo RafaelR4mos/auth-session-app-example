@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type Session = {
-  id: string;
-  user_id: number;
-  email: string;
-  created_at: string;
-  expires_at: string;
-};
+import type { Session } from "@/types/database";
 
 export default function SessionsPage() {
   const [sessions, setSessions] = useState<Session[]>([]);

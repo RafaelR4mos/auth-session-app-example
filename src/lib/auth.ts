@@ -3,13 +3,12 @@ import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import db from "./db";
 import { getBrazilianUnixNow } from "./date-utils";
+import type { User, UserSession } from "@/types/database";
 
 // duração da sessão (ex.: 1 minuto = 60)
 export const SESSION_TTL_SECONDS = 120  // 7 Dias 60 * 60 * 24 * 7;
 export const COOKIE_NAME = "session";
 export const SECRET = process.env.SECRET_KEY || "dev-secret-change-me";
-
-export type User = { id: number; email: string; password_hash: string };
 
 export async function hashPassword(password: string) {
   const salt = await bcrypt.genSalt(10);
@@ -65,7 +64,7 @@ export async function destroySession() {
   });
 }
 
-export async function getSessionUser(): Promise<{ id: number; email: string } | null> {
+export async function getSessionUser(): Promise<UserSession | null> {
   const cookieStore = await cookies();
   const cookie = cookieStore.get(COOKIE_NAME);
   if (!cookie?.value) return null;
@@ -79,7 +78,7 @@ export async function getSessionUser(): Promise<{ id: number; email: string } | 
     WHERE sessions.id = ? AND sessions.expires_at > datetime('now')
   `
     )
-    .get(cookie.value) as { id: number; email: string } | undefined;
+    .get(cookie.value) as UserSession | undefined;
 
   return row ?? null;
 }

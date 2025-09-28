@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { formatBrazilianDate } from "@/lib/date-utils";
+import type { SessionRow } from "@/types/database";
 
 export async function GET() {
   const rows = db
@@ -12,7 +13,7 @@ export async function GET() {
     ORDER BY sessions.created_at DESC
   `
     )
-    .all();
+    .all() as SessionRow[];
 
   // Formatar as datas para o timezone brasileiro
   const sessionsWithBrazilianDates = rows.map(row => ({

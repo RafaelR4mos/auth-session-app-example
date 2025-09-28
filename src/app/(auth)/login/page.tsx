@@ -13,17 +13,30 @@ export default function LoginPage() {
     const form = new FormData(e.currentTarget);
     const email = form.get("email");
     const password = form.get("password");
-    const res = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Erro ao entrar");
-      return;
+    
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Importante para cookies
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Erro ao entrar");
+        return;
+      }
+      
+      // Aguardar um pouco para o cookie ser definido
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Forçar refresh da página para garantir que o cookie seja lido
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Erro no login:", err);
+      setError("Erro de conexão. Tente novamente.");
     }
-    router.replace("/");
   }
 
   return (

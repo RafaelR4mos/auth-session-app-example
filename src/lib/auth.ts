@@ -31,21 +31,28 @@ export async function createSession(userId: number) {
   const now = getBrazilianUnixNow();
   const expires = now + SESSION_TTL_SECONDS;
 
+  console.log("Creating session for user:", userId);
+  console.log("Token:", token.substring(0, 8) + "...");
+  console.log("Expires at:", new Date(expires * 1000).toISOString());
+
   db.prepare(
     "INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, datetime(?,'unixepoch'))"
   ).run(token, userId, expires);
 
   // grava cookie http-only
   const cookieStore = await cookies();
-  cookieStore.set({
+  const cookieOptions = {
     name: COOKIE_NAME,
     value: token,
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production" ? true : false,
     path: "/",
     expires: new Date(expires * 1000),
-  });
+  };
+  
+  console.log("Setting cookie with options:", cookieOptions);
+  cookieStore.set(cookieOptions as any);
 
   return token;
 }

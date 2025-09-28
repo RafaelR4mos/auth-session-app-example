@@ -2,8 +2,7 @@ import Database from "better-sqlite3";
 import path from "node:path";
 
 // No Vercel, usar banco em memória para evitar problemas de sistema de arquivos
-const isVercel = process.env.VERCEL === '1';
-const dbPath = isVercel ? ':memory:' : path.join(process.cwd(), "app.db");
+const dbPath = path.join(process.cwd(), "app.db");
 const db = new Database(dbPath);
 
 // Criação das tabelas

@@ -2,9 +2,10 @@ import { cookies } from "next/headers";
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import db from "./db";
+import { getBrazilianUnixNow } from "./date-utils";
 
-// duração da sessão (ex.: 7 dias)
-export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+// duração da sessão (ex.: 1 minuto = 60)
+export const SESSION_TTL_SECONDS = 120  // 7 Dias 60 * 60 * 24 * 7;
 export const COOKIE_NAME = "session";
 export const SECRET = process.env.SECRET_KEY || "dev-secret-change-me";
 
@@ -26,9 +27,9 @@ function randomToken() {
   return `${raw}.${hmac}`;
 }
 
-export function createSession(userId: number) {
+export async function createSession(userId: number) {
   const token = randomToken();
-  const now = Math.floor(Date.now() / 1000);
+  const now = getBrazilianUnixNow();
   const expires = now + SESSION_TTL_SECONDS;
 
   db.prepare(
@@ -36,7 +37,8 @@ export function createSession(userId: number) {
   ).run(token, userId, expires);
 
   // grava cookie http-only
-  cookies().set({
+  const cookieStore = await cookies();
+  cookieStore.set({
     name: COOKIE_NAME,
     value: token,
     httpOnly: true,
@@ -49,12 +51,13 @@ export function createSession(userId: number) {
   return token;
 }
 
-export function destroySession() {
-  const cookie = cookies().get(COOKIE_NAME);
+export async function destroySession() {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(COOKIE_NAME);
   if (cookie?.value) {
     db.prepare("DELETE FROM sessions WHERE id = ?").run(cookie.value);
   }
-  cookies().set({
+  cookieStore.set({
     name: COOKIE_NAME,
     value: "",
     path: "/",
@@ -62,8 +65,9 @@ export function destroySession() {
   });
 }
 
-export function getSessionUser(): { id: number; email: string } | null {
-  const cookie = cookies().get(COOKIE_NAME);
+export async function getSessionUser(): Promise<{ id: number; email: string } | null> {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(COOKIE_NAME);
   if (!cookie?.value) return null;
 
   const row = db

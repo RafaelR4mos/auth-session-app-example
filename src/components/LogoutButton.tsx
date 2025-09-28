@@ -11,7 +11,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={doLogout}
-      className="px-4 py-2 bg-gray-900 text-white rounded"
+      className="btn btn-destructive"
     >
       Sair
     </button>

@@ -27,34 +27,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-white shadow rounded p-6">
-      <h1 className="text-2xl font-semibold mb-4">Entrar</h1>
-      <form onSubmit={onSubmit} className="space-y-3">
-        <input
-          name="email"
-          type="email"
-          required
-          placeholder="email@exemplo.com"
-          className="w-full border rounded px-3 py-2"
-        />
-        <input
-          name="password"
-          type="password"
-          required
-          placeholder="senha"
-          className="w-full border rounded px-3 py-2"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button className="w-full bg-blue-600 text-white rounded py-2 hover:bg-blue-700">
+    <div className="card p-8 space-y-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-card-foreground mb-2">Entrar</h1>
+        <p className="text-muted-foreground">
+          Acesse sua conta para continuar
+        </p>
+      </div>
+      
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium text-card-foreground">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            placeholder="seu@email.com"
+            className="input w-full"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium text-card-foreground">
+            Senha
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            placeholder="Sua senha"
+            className="input w-full"
+          />
+        </div>
+        
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+        )}
+        
+        <button 
+          type="submit"
+          className="btn btn-primary w-full py-3"
+        >
           Entrar
         </button>
       </form>
-      <p className="text-sm mt-4">
-        Novo por aqui?{" "}
-        <a href="/(auth)/register" className="underline">
-          Criar conta
-        </a>
-      </p>
+      
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          Novo por aqui?{" "}
+          <a 
+            href="/register" 
+            className="text-primary hover:text-blue-700 font-medium underline"
+          >
+            Criar conta
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

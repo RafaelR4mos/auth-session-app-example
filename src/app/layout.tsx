@@ -13,8 +13,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <body className="min-h-screen">
-        <div className="max-w-md mx-auto p-6">{children}</div>
+      <body className="min-h-screen bg-background">
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="w-full max-w-md space-y-6">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-foreground mb-2">
+                Sistema de Autenticação
+              </h1>
+              <p className="text-muted-foreground">
+                Gerencie suas sessões com segurança
+              </p>
+            </div>
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
